@@ -20,7 +20,7 @@ struct analysis_lib_dataset_t
     uint32_t dataset_id; // meaningless for datasets not returned by params
     const double *timestamps;
     uint32_t num_samples;
-    const double **channels;
+    const double *const *channels;
     uint32_t num_channels;
 };
 

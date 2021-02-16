@@ -23,7 +23,7 @@ use std::{
 
 mod version;
 
-const SKIN_HYDRATION_SENSOR_V2: &str = "SKIN HYDRATION SENSOR V2";
+const SKIN_HYDRATION_SENSOR_V2: &str = "Skin Hydration V2";
 
 lazy_static! {
     static ref ERRORS: RwLock<Vec<CString>> = RwLock::new(Vec::new());
@@ -120,7 +120,11 @@ impl AnalysisLibPeripheralInternal {
 #[no_mangle]
 pub extern "C" fn analysis_lib_init() {
     // nop
-    log::debug!("analysis_lib_init");
+    env_logger::init();
+    log::debug!(
+        "analysis_lib_init: RUST_LOG={:?}",
+        std::env::var("RUST_LOG")
+    );
 }
 
 #[no_mangle]
@@ -203,7 +207,13 @@ pub extern "C" fn analysis_lib_analyze(
         SKIN_HYDRATION_SENSOR_V2 => {
             analyze_skin_hydration_sensor_v2(&params, datasets, num_datasets, results, num_results)
         }
-        _ => false,
+        _ => {
+            log::warn!(
+                "No matching project analysis implementation for {:?}",
+                params.project_mode
+            );
+            false
+        }
     }
 }
 
